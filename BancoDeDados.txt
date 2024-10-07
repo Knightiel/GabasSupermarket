@@ -1,0 +1,137 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema projeto_supermercado
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema projeto_supermercado
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `projeto_supermercado` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `projeto_supermercado` ;
+
+-- -----------------------------------------------------
+-- Table `projeto_supermercado`.`cliente`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `projeto_supermercado`.`cliente` (
+  `id_cli` INT NOT NULL AUTO_INCREMENT,
+  `nome_cli` VARCHAR(45) NOT NULL,
+  `cpf_cli` VARCHAR(11) NOT NULL,
+  `datanasci_cli` VARCHAR(15) NOT NULL,
+  `endereco_cli` VARCHAR(60) NOT NULL,
+  `cidade_cli` VARCHAR(45) NOT NULL,
+  `sexo_cli` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`id_cli`),
+  UNIQUE INDEX `cpf_cli_UNIQUE` (`cpf_cli` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 33
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `projeto_supermercado`.`vendas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `projeto_supermercado`.`vendas` (
+  `id_vendas` INT NOT NULL AUTO_INCREMENT,
+  `cliente_idCliente` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id_vendas`),
+  INDEX `fk_vendas_cliente1_idx` (`cliente_idCliente` ASC) VISIBLE,
+  CONSTRAINT `fk_vendas_cliente1`
+    FOREIGN KEY (`cliente_idCliente`)
+    REFERENCES `projeto_supermercado`.`cliente` (`id_cli`)
+    ON DELETE SET NULL)
+ENGINE = InnoDB
+AUTO_INCREMENT = 98
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `projeto_supermercado`.`caixa`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `projeto_supermercado`.`caixa` (
+  `id_caixa` INT NOT NULL AUTO_INCREMENT,
+  `fk_id_vendas` INT NOT NULL,
+  `valor_total_caixa` DECIMAL(10,2) NULL DEFAULT NULL,
+  `desconto` INT NULL DEFAULT NULL,
+  `valor_final_caixa` DECIMAL(10,2) NULL DEFAULT NULL,
+  `forma_pagamento_caixa` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_caixa`),
+  INDEX `fk_caixa_vendas1_idx` (`fk_id_vendas` ASC) VISIBLE,
+  CONSTRAINT `fk_caixa_vendas1`
+    FOREIGN KEY (`fk_id_vendas`)
+    REFERENCES `projeto_supermercado`.`vendas` (`id_vendas`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 36
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `projeto_supermercado`.`produto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `projeto_supermercado`.`produto` (
+  `id_produto` INT NOT NULL AUTO_INCREMENT,
+  `descricao_produto` VARCHAR(50) NOT NULL,
+  `marca_produto` VARCHAR(35) NOT NULL,
+  `valor_unitario_produto` VARCHAR(100) NOT NULL,
+  `categoria_produto` VARCHAR(50) NOT NULL,
+  `quantidade_estoque_produto` INT NOT NULL,
+  PRIMARY KEY (`id_produto`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 13
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `projeto_supermercado`.`users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `projeto_supermercado`.`users` (
+  `id_users` INT NOT NULL AUTO_INCREMENT,
+  `nome_user` VARCHAR(45) NOT NULL,
+  `senha_user` VARCHAR(45) NOT NULL,
+  `eh_admin` BIT(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id_users`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `projeto_supermercado`.`venda_has_produto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `projeto_supermercado`.`venda_has_produto` (
+  `id_item` INT NOT NULL AUTO_INCREMENT,
+  `fk_id_vendas` INT NULL DEFAULT NULL,
+  `fk_id_produto` INT NULL DEFAULT NULL,
+  `valor_vp` DECIMAL(10,2) NULL DEFAULT NULL,
+  `total_vp` DECIMAL(10,2) NULL DEFAULT NULL,
+  `quantidade_vp` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id_item`),
+  INDEX `fk_vendas_has_produto_produto1_idx` (`fk_id_produto` ASC) VISIBLE,
+  INDEX `fk_item_vendas1_idx` (`fk_id_vendas` ASC) VISIBLE,
+  CONSTRAINT `fk_item_vendas1`
+    FOREIGN KEY (`fk_id_vendas`)
+    REFERENCES `projeto_supermercado`.`vendas` (`id_vendas`),
+  CONSTRAINT `fk_vendas_has_produto_produto1`
+    FOREIGN KEY (`fk_id_produto`)
+    REFERENCES `projeto_supermercado`.`produto` (`id_produto`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 105
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
